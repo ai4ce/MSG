@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Multiview Scene Graph">
+  <meta name="keywords" content="Scene representation, Scene graph, Object association, Place recoginition">     
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Multiview Scene Graph</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script> -->
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+  <script src="./static/js/copy2clipboard.js"></script>
+  <script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+  
+  <script src="https://cdn.knightlab.com/libs/juxtapose/latest/js/juxtapose.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.knightlab.com/libs/juxtapose/latest/css/juxtapose.css">
+</head>
+
+
+<body>
+
+<!-- Navigation bar. -->
+<nav class="navbar is-light" role="navigation" aria-label="main navigation">
+  <div class="container is-max-desktop">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://ai4ce.github.io/" target="_blank" rel="noopener noreferrer">
+        <img src="./static/images/ai4ce_new_linear_notext.svg" alt="AI4CE Lab" style="height: 2.0rem;">
+      </a>
+      <a role="button" onclick="this.classList.toggle('is-active');document.querySelector('#'+this.dataset.target).classList.toggle('is-active');" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item" href="https://www.nyu.edu/" target="_blank">
+          <img src="./static/images/NYU_Long_RGB_Color.png" alt="NYU Logo" style="height: 2.0rem;">
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Title and authors. -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">
+            Multiview Scene Graph
+          </h1>
+          <div class="column is-full_width">
+            <h2 class="title is-4">NeurIPS 2024</h2>
+          </div>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://juexzz.github.io/">Juexiao Zhang</a>,
+            </span>
+            <span class="author-block">
+              <a href="">Gao Zhu</a>,
+            </span>
+            <span class="author-block">
+              <a href="">Sihang Li</a>,
+            </span>
+            <span class="author-block">
+              <a href="">Xinhao Liu</a>,
+            </span>
+            <span class="author-block">
+              <a href="">Haorui Song</a>,
+            </span>
+            <span class="author-block">
+              <a href="">Xinran Tang</a>,
+            </span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=YeG8ZM0AAAAJ">Chen Feng</a>,
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"> New York University
+          </div>
+
+
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                 <!-- add here later. -->
+                <a href=""                
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- <span class="link-block"> -->
+                <!-- add here later. -->
+               <!-- <a href=""                    
+                  class="external-link button is-normal is-rounded is-dark">
+                 <span class="icon">
+                     <i class="fas fa-camera"></i>
+                 </span>
+                 <span>Appendix</span>
+               </a> -->
+             <!-- </span> -->
+              <!-- Video Link. -->
+              <span class="link-block">
+                <!-- <a href="https://youtu.be/thC0PeAQxe0"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a> -->
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/ai4ce/MSG"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+              <!-- Dataset Link. -->
+              <span class="link-block">
+                <a href="https://huggingface.co/datasets/ai4ce/"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="far fa-images"></i>
+                  </span>
+                  <span>Data</span>
+                </a>
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Teaser. -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full-width teaser no-margin">
+        
+        <h2 class="title is-3">TLDR</h2>
+        <p style="font-size: 20px; background-color: #8b00e13b;">
+          We propose to build <b>Multiview Scene Graphs (MSG)</b> from unposed images, 
+          topologically representing a scene with interconnected place and object nodes
+        </p>
+        <br>
+
+        <center>
+          <div id="overview">
+            <img src="./static/images/teaser.jpg" style="width: 45vw; min-width: 330px;" alt="Teaser Image"> 
+          </div>
+          <p>
+            <b>Multiview Scene Graph (MSG).</b> The task of MSG takes unposed RGB images as input and outputs a place+object graph. 
+            The graph contains place-place edges and place-object edges. Connected place nodes represent images taken at the same place. 
+            The same object recognized from different views is associated and merged as one node and connected to the corresponding place nodes.
+          </p>
+        </center>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- Abstract -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3 has-text-centered">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            A proper scene representation is central to the pursuit of spatial intelligence where agents can robustly reconstruct and efficiently understand 3D scenes.
+            A scene representation is either metric, such as landmark maps in 3D reconstruction, 3D bounding boxes in object detection, or voxel grids in occupancy prediction, or topological, such as pose graphs with loop closures in SLAM or visibility graphs in SfM.
+            In this work, we propose to build \textit{Multiview Scene Graphs} (MSG) from unposed images, representing a scene topologically with interconnected place and object nodes. 
+            The task of building MSG is challenging for existing representation learning methods since it needs to jointly address both visual place recognition, object detection, and object association from images with limited fields of view and potentially large viewpoint changes.
+            To evaluate any method tackling this task, we developed an MSG dataset and annotation based on a public 3D dataset.
+            We also propose an evaluation metric based on the intersection-over-union score of MSG edges. 
+            Moreover, we develop a novel baseline method built on mainstream pretrained vision models, combining visual place recognition and object association into one Transformer decoder architecture. 
+            Experiments demonstrate our method has superior performance compared to existing relevant baselines.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<hr>
+
+<!-- Method Overview -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered ">
+      <div class="column is-full-width">
+        <h2 class="title is-3 has-text-centered">Method</h2>
+        <center>
+          <div id="overview">
+            <img src="./static/images/main.jpg" style="width: 55vw; min-width: 330px;" alt="Method Image"> 
+          </div>
+
+
+          <div class="content has-text-justified">
+            <p id="method-text-content"> 
+              <b>The AoMSG model.</b> Places and objects queries are obtained by cropping the image feature
+              map using corresponding bounding boxes. The queries are then fed into the Transformer decoder to
+              obtain the final places and objects embeddings. Bounding boxes are in different colors for clarity.
+              The parameters in the Transformer decoder and the linear projector heads are trained with supervised
+              contrastive learning. Image encoder and object detector are pretrained and frozen.
+            </p>
+
+          </div>
+        </center>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+
+<!-- BibTeX -->
+<section class="section" id="BibTeX"> 
+  <div class="container is-max-desktop content">
+    <center>
+    <h2 id="bibtexTitle" class="title">BibTeX</h2>
+    <button id="copyButton" onclick="copyToClipboard()">
+      <i class="fas fa-copy"></i>
+    </button>
+    <br>
+    <pre style="display: inline-flex; text-align: left";><code id="bibtexInfo">
+Coming Soon
+      </code>
+    </pre>
+  </center>
+  </div>
+</section>
+          
+<!-- Acknowledgements   -->
+<section class="section" id="Acknowledgements">
+  <div class="container is-max-desktop content">
+    <h2 class="title">Acknowledgements</h2>
+    The work was supported in part through NSF grants 2238968 and 2322242, and the NYU IT High Performance Computing resources, services, and staff expertise.
+  </div>
+</section>
+          
+<!-- Footer -->       
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+            This webpage template is from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>. 
+            We sincerely thank <a href="https://keunhong.com/">Keunhong Park</a> for developing and open-sourcing this template.
+            This website is inspired by the project page of <a href="https://ai4ce.github.io/FusionSense/">FusionSense</a>.
+          </p>
+        </div>
+      </div>
+          </p>
+        </div>
+      </div>
+  </div>
+</footer>
+
+</body>
+
+</html>

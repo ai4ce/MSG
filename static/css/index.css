@@ -1,0 +1,229 @@
+body {
+  font-family: 'Noto Sans', sans-serif;
+}
+
+
+#copyButton{
+
+  margin-top: 0px;
+  margin-right: 10px;
+  border-radius: 5px;
+  border: 0px solid #ccc;
+  background-color: #fff;
+  padding: 5px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+#copyButton:hover{
+  background-color: #eee;
+}
+
+#bibtexTitle{
+  margin-bottom: 0px;
+}
+
+.footer .icon-link {
+    font-size: 25px;
+    color: #000;
+}
+
+.link-block a {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.dnerf {
+  font-variant: small-caps;
+}
+
+
+.teaser .hero-body {
+  padding-top: 0;
+  padding-bottom: 3rem;
+}
+
+.teaser {
+  font-family: 'Google Sans', sans-serif;
+}
+
+
+.publication-title {
+}
+
+.publication-banner {
+  max-height: parent;
+
+}
+
+.publication-banner video {
+  position: relative;
+  left: auto;
+  top: auto;
+  transform: none;
+  object-fit: fit;
+}
+
+.publication-header .hero-body {
+}
+
+.publication-title {
+    font-family: 'Google Sans', sans-serif;
+}
+
+.publication-authors {
+    font-family: 'Google Sans', sans-serif;
+}
+
+.publication-venue {
+    color: #555;
+    width: fit-content;
+    font-weight: bold;
+}
+
+.publication-awards {
+    color: #ff3860;
+    width: fit-content;
+    font-weight: bolder;
+}
+
+.publication-authors {
+}
+
+.publication-authors a {
+   color: hsl(204, 86%, 53%) !important;
+}
+
+.publication-authors a:hover {
+    text-decoration: underline;
+}
+
+.author-block {
+  display: inline-block;
+}
+
+.publication-banner img {
+}
+
+.publication-authors {
+  /*color: #4286f4;*/
+}
+
+.publication-video {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%;
+
+    overflow: hidden;
+    border-radius: 10px !important;
+}
+
+.publication-video iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.publication-body img {
+}
+
+.results-carousel {
+  overflow: hidden;
+}
+
+.results-carousel .item {
+  margin: 5px;
+  overflow: hidden;
+  border: 1px solid #bbb;
+  border-radius: 10px;
+  padding: 0;
+  font-size: 0;
+}
+
+.results-carousel video {
+  margin: 0;
+}
+
+
+.interpolation-panel {
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+.interpolation-panel .interpolation-image {
+  width: 100%;
+  border-radius: 5px;
+}
+
+.interpolation-video-column {
+}
+
+.interpolation-panel .slider {
+  margin: 0 !important;
+}
+
+.interpolation-panel .slider {
+  margin: 0 !important;
+}
+
+#interpolation-image-wrapper {
+  width: 100%;
+}
+#interpolation-image-wrapper img {
+  border-radius: 5px;
+}
+
+.slider-block{
+  display: none; /* Hide all divs initially */
+  opacity: 0;
+}
+
+.slider-block.show{
+  display: block;
+  opacity: 1;
+}
+
+.sliders-container {
+  display: flex;
+  justify-content: space-between; /* Or 'space-around' for more spacing */
+  gap: 0px; /* Adds space between the sliders */
+  flex-wrap: unset; /* Prevents the sliders from wrapping */
+}
+
+.slider-wrapper {
+  width: 48%; /* Make each slider 48% of the container width for side-by-side */
+}
+
+#trans_depth, #trans_normal, #trans_rgb, #trans_object, #black_9_depth, #black_9_normal, #black_9_rgb, #black_9_object,
+#black_5_depth, #black_5_normal, #black_5_rgb, #black_5_object {
+  width: 100%; /* General width for all sliders */
+}
+
+.btn {
+  background-color: #8b00e1cb !important; /* Green background */
+  color: white; /* White text */
+  padding: 10px 20px; /* Padding around the button */
+  border: none; /* Remove border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 16px; /* Font size */
+  margin: 10px; /* Space between buttons */
+  transition: background-color 0.3s ease; /* Smooth background color transition */
+}
+.btn:hover {
+  background-color: #8b00e178 !important; /* Darker green on hover */
+}
+
+.btn.active {
+  background-color: #8b00e178 !important;
+}
+.btn.inactive {
+  background-color: #8b00e1cb !important;
+}
+
+.hidden {
+  display: none;
+}
