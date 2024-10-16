@@ -1,0 +1,49 @@
+device: 1
+pp_threshold: 0.5
+object_threshold: 0.5
+# coefficients for multitasking loss
+pr_coeff: 1.0
+obj_coeff: 1.0
+
+eval_split: mini-val
+train_split: mini-val
+
+output_dir: './exp-results/sample-style' #'../topomap-example-data/',
+output_file: 'debug_sample'
+wandb: True
+
+resume: False # no chkpt resuming
+
+eval_output_dir: './exp-results/sample-style/2024-03-20_22-34-56' # this is specific to trained checkpoints
+eval_chkpt: 99-step1000+.pth #null for no checkpoint
+save_every: False # if save specific results for every video
+
+learning_rate: 0.0002
+num_epochs: 100
+warmup_epochs: 5
+warmup: warmup
+
+num_workers: 4
+train_bs: 32
+eval_bs: 8 # debug test
+
+log_every: 1
+chkpt_every: 10000
+
+obj_embedder:
+  model: "dinov2-small" #"dinov2-small-mean", "dinov2-small-cls", "convnext-tiny-224", #'resnet50', # "dinov2_vits14", "dinov2_vitb14", "dinov2_vitl14", "dinov2_vitg14"
+  weights: DEFAULT
+  freeze: True
+  output_type: mean
+
+place_embedder:
+  model: "dinov2-small" #"convnext-tiny", #'resnet50', # "dinov2_vits14", "dinov2_vitb14", "dinov2_vitl14", "dinov2_vitg14"
+  weights: DEFAULT
+  freeze: True
+  output_type: feature # mean, cls, feature
+
+associator:
+  model: "AoMSG-S-4" # "AoMSG-S-2", "SepMSG-mlp", "AoMSG-S-4"
+  object_dim: 384 # feature dim from the encoders, FYI dinov2-small 384, dinov2-base 768
+  place_dim: 384
+  output_dim: 256

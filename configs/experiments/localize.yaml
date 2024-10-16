@@ -1,0 +1,43 @@
+# for realworld inference
+dataset_path: '/home/jz4725/topomap'
+device: 0
+pp_threshold: 0.3
+object_threshold: 0.2
+
+eval_split: real
+
+# for eval
+eval_output_dir: './exp-results/hpc-damsg-mse/2024-05-14_22-26-52' # this is specific to trained checkpoints
+eval_chkpt: 29-step22470+.pth #null for no checkpoint
+save_every: False # if save specific results for every video
+vis_det: False
+
+num_workers: 8
+eval_bs: 64
+
+log_every: 1
+
+detector:
+  model: grounding-dino # "grounding-dino", "fasterrcnn", "gt", "fasterrcnnv2"
+  num_classes: 18
+  freeze: True
+  weights: DEFAULT
+  pre_saved: True
+
+obj_embedder:
+  model: "dinov2-base" #"dinov2-small", "convnext-tiny-224", #'resnet50', # "dinov2_vits14", "dinov2_vitb14", "dinov2_vitl14", "dinov2_vitg14"
+  weights: DEFAULT
+  freeze: True
+  output_type: feature
+
+place_embedder:
+  model: "dinov2-base" #"convnext-tiny", #'resnet50', # "dinov2-base", "dinov2_vitb14", "dinov2_vitl14", "dinov2_vitg14"
+  weights: DEFAULT
+  freeze: True
+  output_type: feature # mean, cls, feature
+
+associator:
+  model: "DaMSG-S-4" # "AoMSG-S-2"
+  object_dim: 768 # FYI resnet18=512, dinov2-small=384, dinov2-base=768
+  place_dim: 768
+  output_dim: 1024

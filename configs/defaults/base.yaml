@@ -1,0 +1,32 @@
+seed: 42
+device: 0
+pp_threshold: 0.5
+object_threshold: 0.5
+
+vis_det: False # if visualize detection results
+
+eval_split: mini-val
+train_split: mini-val
+
+output_dir: './exp-results/' #'../topomap-example-data/',
+output_file: 'debug_map_results.json'
+
+learning_rate: 0.0001
+num_epochs: 1
+
+num_workers: 1
+train_bs: 16
+eval_bs: 1 # debug test
+bs_video: 1 # how many videos per batch
+# to enable eval during training, set eval_step > 0
+eval_step: -1
+
+log_every: 1
+chkpt_every: 10
+
+# coefficients for multitasking loss
+loss_params:
+  pr: 1.0
+  obj: 1.0
+  tcr: 0.0
+  mean: 0.0

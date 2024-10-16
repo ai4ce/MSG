@@ -1,0 +1,30 @@
+detector:
+  model: gt # "grounding-dino", "fasterrcnn", "gt", "fasterrcnnv2"
+  num_classes: 18
+  freeze: True
+  weights: DEFAULT
+  pre_saved: False
+
+obj_embedder:
+  model: "dinov2-small" #"convnext-tiny", #'resnet50', # "dinov2_vits14", "dinov2_vitb14", "dinov2_vitl14", "dinov2_vitg14"
+  weights: DEFAULT
+  freeze: True
+  output_type: mean # mean, cls
+
+place_embedder:
+  model: "dinov2-small" #"convnext-tiny", #'resnet50', # "dinov2_vits14", "dinov2_vitb14", "dinov2_vitl14", "dinov2_vitg14"
+  weights: DEFAULT
+  freeze: True
+  output_type: mean # mean, cls, feature
+
+associator:
+  model: "SepMSG-direct" # "AoMSG-S-2"
+  object_dim: 384 # same as dinov2-small
+  place_dim: 384
+  output_dim: 384
+
+# loss terms
+pr_loss: mse
+obj_loss: bce
+pos_weight: 10
+pp_weight: 1

@@ -1,0 +1,65 @@
+dataset_path: '/home/jz4725/topomap' # dataset dir on hpc
+# sample style training script
+device: 1
+pp_threshold: 0.0
+object_threshold: 0.0
+# coefficients for multitasking loss
+loss_params:
+  pr: 1.0
+  obj: 1.0
+  tcr: 0.05
+  mean: 0.05
+
+eval_split: mini-val
+train_split: Training
+
+output_dir: './exp-results/sep-multivid' #'../topomap-example-data/',
+output_file: 'train'
+wandb: True
+
+# if resume training from a chkpt
+resume: False
+resume_path: './exp-results/sep-multivid/2024-04-29_00-35-27/checkpoints/29-step22470+.pth'
+
+eval_output_dir: '/home/jz4725/msg/exp-results/sep_ckpt' # this is specific to trained checkpoints
+eval_chkpt:  sep_linear.pth #null for no checkpoint
+save_every: False # if save specific results for every video
+# to enable eval during training, set eval_step > 0
+eval_step: 300
+
+learning_rate: 0.00005
+num_epochs: 30
+warmup_epochs: 3
+warmup: cos
+
+num_workers: 10
+train_bs: 384
+bs_video: 6 # number of videos per batch
+eval_bs: 64 # debug test
+
+log_every: 1
+chkpt_every: 3000
+
+obj_embedder:
+  model: "dinov2-base" #"dinov2-small-mean", "dinov2-small-cls", "convnext-tiny-224", #'resnet50', # "dinov2_vits14", "dinov2_vitb14", "dinov2_vitl14", "dinov2_vitg14"
+  weights: DEFAULT
+  freeze: True
+  output_type: mean
+
+place_embedder:
+  model: "dinov2-base" #"convnext-tiny", #'resnet50', # "dinov2_vits14", "dinov2_vitb14", "dinov2_vitl14", "dinov2_vitg14"
+  weights: DEFAULT
+  freeze: True
+  output_type: cls # mean, cls, feature
+
+associator:
+  model: "SepMSG-linear" # ""SepMSG-linear"
+  object_dim: 768 # FYI dinov2-small 384, dinov2-base 768
+  place_dim: 768
+  output_dim: 2048
+
+# loss terms
+pr_loss: mse
+obj_loss: mse
+pos_weight: 10
+pp_weight: 1

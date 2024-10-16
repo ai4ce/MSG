@@ -1,0 +1,68 @@
+dataset_path: '/topomap/' #'../topomap-example-data/',
+# annotation file: refine_topo_gt.json
+all_splits: ['Training', 'Validation', 'Test', 'mini-val']
+image_size: [192, 256] # NOTE this is different from the conventional 224x224, transformation needed to be compatible with the models.
+model_image_size: [224, 224]
+num_classes: 18
+class_map:
+  bathtub: 1
+  bed: 2
+  cabinet: 3
+  chair: 4
+  dishwasher: 5
+  fireplace: 6
+  oven: 7
+  refrigerator: 8
+  shelf: 9
+  sink: 10
+  sofa: 11
+  stool: 12
+  stove: 13
+  table: 14
+  toilet: 15
+  tv_monitor: 16
+  washer: 17
+  unknown: 18
+  background: 0
+
+inv_class_map:
+  1: bathtub
+  2: bed
+  3: cabinet
+  4: chair
+  5: dishwasher
+  6: fireplace
+  7: oven
+  8: refrigerator
+  9: shelf
+  10: sink
+  11: sofa
+  12: stool
+  13: stove
+  14: table
+  15: toilet
+  16: tv_monitor
+  17: washer
+  18: unknown
+  0: background
+
+color_dict:
+  bathtub: [1, 0, 0]
+  bed: [0, 1, 0]
+  cabinet: [0, 0, 1]
+  chair: [1, 1, 0]
+  dishwasher: [0, 1, 1]
+  fireplace: [1, 0, 1]
+  oven: [0.5, 0, 0]
+  refrigerator: [0.6, 1, 0.3]
+  shelf: [0, 0.5, 0]
+  sink: [0.5, 0, 0.5]
+  sofa: [0.2, 0.3, 0.2]
+  stool: [0.8, 0.7, 0.8]
+  stove: [0.1, 0.8, 0.9]
+  table: [0.4, 0.1, 0.7]
+  toilet: [0.5, 0.5, 0]
+  tv_monitor: [0, 0.5, 0.5]
+  washer: [0.5, 0.5, 0.5]
+  unknown: [0, 0, 0.5]
+

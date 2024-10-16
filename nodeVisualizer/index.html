@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Tutorial Demo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <style>
+    .g6-tooltip {
+      border: 3px solid #e2e2e2;
+      position: relative;
+      padding: 5px;
+    }
+    .g6-tooltip img {
+      max-width: 300px;
+      max-height: 300px;
+    }
+    .canvas-container {
+      position: relative;
+      display: inline-block;
+    }
+    .canvas-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    #sidebarMenu {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      width: 240px;
+      padding-top: 58px;
+      box-shadow: 0 2px 5px 0 rgb(0 0 0 / 5%), 0 2px 10px 0 rgb(0 0 0 / 5%);
+      z-index: 600;
+      overflow-x: hidden;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+    
+    #sidebarMenu.collapse.show {
+      transform: translateX(0);
+    }
+    
+    .hamburger-btn {
+      position: fixed;
+      top: 0;
+      right: 0;
+      margin: 0.5rem;
+      z-index: 1050;
+    }
+    .hamburger-btn button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: none;
+    }
+  </style>
+  
+</head>
+
+<body>
+  <div class="hamburger-btn">
+    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu"
+      aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+      <i><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-list"
+          viewBox="0 0 16 16">
+          <path fill-rule="evenodd"
+            d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
+        </svg></i>
+    </button>
+  </div>
+  <!-- Sidebar -->
+  <nav id="sidebarMenu" class="collapse d-block collapse-horizontal bg-white">
+    <h4 class="mx-3 my-auto" id="curNodeTitle">Current Node</h4>
+    <div class="position-sticky">
+      <h5 class="mx-3 mt-4">Camera Nodes</h5>
+      <div id="cameraList" class="list-group mx-3 mt-4">
+        <!-- <button type="button" class="list-group-item list-group-item-action active" aria-current="true">
+          A camera node
+        </button> -->
+      </div>
+      <h5 class="mx-3 mt-4">Object Nodes</h5>
+      <div id="objectList" class="list-group mx-3 mt-4">
+        <!-- <button type="button" class="list-group-item list-group-item-action active" aria-current="true">
+          An object node
+        </button> -->
+      </div>
+      <button id="saveGraph" type="button" class="btn btn-large btn-primary mx-3 mt-4" onclick="saveGraph()">Save</button>
+    </div>
+  </nav>
+  <!-- Sidebar -->
+
+  
+  <div id="mountNode"></div>
+
+
+  <script src="https://gw.alipayobjects.com/os/lib/antv/g6/4.8.21/dist/g6.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script>
+    // 相机节点tooltip div绘制
+    function cameraNodeTooltip(camNodeModel){
+      const outDiv = document.createElement('div');
+      outDiv.className = 'g6-tooltip';
+      const img = document.createElement('img');
+      img.src = `img/${camNodeModel.sampled_frames}.png`;
+      outDiv.appendChild(img);
+
+      // 用一个container包裹canvas，这样可以保证canvas的位置和节点的位置一致
+      const canvasContainer = document.createElement('div');
+      canvasContainer.className = 'canvas-container';
+      canvasContainer.style.position = 'absolute';
+      // container的位置在div的padding位置
+      canvasContainer.style.top = '5px';
+      canvasContainer.style.left = '5px';
+
+      // 创建canvas
+      const canvasOverlay = document.createElement('canvas');
+      canvasOverlay.className = 'canvas-overlay';
+      canvasOverlay.width = img.width;
+      canvasOverlay.height = img.height;
+      canvasContainer.appendChild(canvasOverlay);
+      outDiv.appendChild(canvasContainer);
+
+      // 绘制标注框
+      const ctx = canvasOverlay.getContext('2d');
+      // TODO: 随机分配颜色
+      ctx.strokeStyle = '#FF0000';
+      ctx.lineWidth = 1;
+      if(camNodeModel.hasOwnProperty('annotations') && camNodeModel.annotations !== null){
+        for (const [_, cood] of Object.entries(camNodeModel.annotations)) {
+          const x = cood[0];
+          const y = cood[1];
+          const width = cood[2] - cood[0];
+          const height = cood[3] - cood[1];
+          ctx.strokeRect(x, y, width, height);
+        }
+      }
+
+      return outDiv;
+    }
+
+    // 物体节点tooltip div绘制
+    function objectNodeTooltip(objNodeModel){
+      const outDiv = document.createElement('div');
+      outDiv.className = 'g6-tooltip';
+      const p = document.createElement('p');
+      p.innerHTML = `Uid: ${objNodeModel.objUid} <br> Name: ${objNodeModel.objName} `;
+      outDiv.appendChild(p);
+      return outDiv;
+    }
+
+    const tooltip = new G6.Tooltip({
+      offsetX: 20,
+      offsetY: 20,
+      getContent(e) {
+        const nodeModel = e.item.getModel();
+        switch(nodeModel.nodeType){
+          case 'camera':
+            return cameraNodeTooltip(nodeModel);
+          case 'object':
+            return objectNodeTooltip(nodeModel);
+        }
+      },
+      itemTypes: ['node'],
+    });
+    
+    const graph = new G6.Graph({
+      fitView: true,
+      // fitViewPadding: [20, 40, 50, 20],
+      container: 'mountNode',
+      // renderer: 'svg',
+      width: window.innerWidth - 10,
+      height: window.innerHeight - 10,
+      // 节点默认配置
+      defaultNode: {
+        labelCfg: {
+          style: {
+            fill: '#000',
+          },
+        },
+      },
+      // 边默认配置
+      defaultEdge: {
+        style: {
+          stroke: '#b5b5b5',
+          lineAppendWidth: 3,
+        },
+        labelCfg: {
+          autoRotate: true,
+        },
+      },
+      // 节点在各状态下的样式
+      nodeStateStyles: {
+        click: {
+          stroke: '#000',
+          lineWidth: 3,
+        },
+      },
+      // 边在各状态下的样式
+      edgeStateStyles: {
+        selected: {stroke: 'steelblue',},
+      },
+      // 布局不使用内置布局，而是使用后端传过来的位置信息
+      // 内置交互
+      modes: {
+        default: [
+          'drag-canvas', 'zoom-canvas',
+        ],
+      },
+      // 插件
+      plugins: [tooltip],
+    });
+
+    // 监听窗口大小变化
+    window.onresize = () => {
+      graph.changeSize(window.innerWidth - 10, window.innerHeight - 10);
+      graph.fitCenter();
+    };
+
+    // 保存图为图片
+    async function saveGraph(){
+      graph.changeSize(5000, 5000);
+      graph.fitView(10);
+      graph.downloadImage();
+      graph.changeSize(window.innerWidth - 10, window.innerHeight - 10);
+      graph.fitView();
+    }
+
+    const main = async () => {
+      const response = await fetch(
+        "./graph_data.json"
+      );
+      const remoteData = await response.json();
+
+      const nodes = remoteData.nodes;
+      const edges = remoteData.edges;
+
+      // 设置相机节点淡蓝色，物体节点淡红色
+      nodes.forEach((node) => {
+        if(!node.style){
+          node.style = {};
+        }
+        node.style.lineWidth = 1;
+        node.style.stroke = '#000';
+        switch(node.nodeType){
+          case 'camera':
+            node.style.fill = 'LightBlue';
+            node.stateStyles = {
+              hover: {fill: 'lightsteelblue',},  // 相机节点hover状态
+              neighbourHover: {fill: 'lightsteelblue',},  // 相邻节点hover时该节点的状态
+            };
+            break;
+          case 'object':
+            node.style.fill = 'LightSalmon';
+            node.stateStyles = {
+              hover: {fill: 'lightcoral',},    // 物体节点hover状态
+              neighbourHover: {fill: 'salmon',},  // 相邻节点hover时该节点的状态
+            };
+            break;
+        }
+      })
+
+      graph.data(remoteData);
+      graph.render();
+
+      // 监听鼠标进入节点
+      graph.on('node:mouseenter', (e) => {
+        const nodeItem = e.item;
+        // 设置目标节点的 hover 状态 为 true
+        graph.setItemState(nodeItem, 'hover', true);
+        // 设置目标节点的相邻节点的 hover 状态 为 true
+        graph.getNeighbors(nodeItem).forEach((neighbour) => {
+          graph.setItemState(neighbour, 'neighbourHover', true);
+        });
+      });
+      // 监听鼠标离开节点
+      graph.on('node:mouseleave', (e) => {
+        const nodeItem = e.item;
+        // 设置目标节点的 hover 状态 false
+        graph.setItemState(nodeItem, 'hover', false);
+        // 设置目标节点的相邻节点的 hover 状态 false
+        graph.getNeighbors(nodeItem).forEach((neighbour) => {
+          graph.setItemState(neighbour, 'neighbourHover', false);
+        });
+      });
+      // 监听鼠标点击节点
+      graph.on('node:click', (e) => {
+        // 先清除所有节点和边的选中状态
+        graph.getNodes().forEach((node) => {
+          graph.clearItemStates(node, ['click', 'neighbourHover']);
+        });
+        graph.getEdges().forEach((edge) => {
+          graph.clearItemStates(edge, 'selected');
+        });
+        const nodeItem = e.item;
+        // 设置目标节点的 click 状态 为 true
+        graph.setItemState(nodeItem, 'click', true);
+
+        // 侧边栏列表
+        const cameraList = document.getElementById('cameraList');
+        const objectList = document.getElementById('objectList');
+        // 清空列表
+        cameraList.innerHTML = '';
+        objectList.innerHTML = '';
+        // 添加当前节点
+        const nodeModel = nodeItem.getModel();
+        const curNodeLi = document.createElement('button');
+        curNodeLi.className = 'list-group-item list-group-item-action active';
+        curNodeLi.innerHTML = nodeModel.label;
+        if(nodeModel.nodeType === 'camera') {
+          cameraList.appendChild(curNodeLi);
+        } else {
+          objectList.appendChild(curNodeLi);
+        }
+
+        // 设置目标节点的相邻节点的 hover 状态 为 true
+        graph.getNeighbors(nodeItem).forEach((neighbour) => {
+          graph.setItemState(neighbour, 'neighbourHover', true);
+
+          // 把相邻节点加入侧边栏
+          const neighbourModel = neighbour.getModel();
+          const neighbourLi = document.createElement('button');
+          neighbourLi.className = 'list-group-item list-group-item-action';
+          neighbourLi.innerHTML = neighbourModel.label;
+          // 按钮点击时，触发相邻节点的 click 事件
+          neighbourLi.addEventListener('click', () => {
+            graph.emit('node:click', {item: neighbour});
+          });
+          if(neighbourModel.nodeType === 'camera') {
+            cameraList.appendChild(neighbourLi);
+          } else {
+            objectList.appendChild(neighbourLi);
+          }
+        });
+
+        // 设置目标节点的相邻边的 selected 状态 为 true
+        graph.getEdges().forEach((edge) => {
+          if (edge.getSource() === nodeItem || edge.getTarget() === nodeItem) {
+            graph.setItemState(edge, 'selected', true);
+          }
+        });
+
+        // 强制展开侧边栏
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const s = new bootstrap.Collapse(sidebarMenu, {toggle: false});
+        s.show();
+      });
+
+      // 监听画布点击事件
+      graph.on('canvas:click', (e) => {
+        // 清除所有节点和边的选中状态
+        graph.getNodes().forEach((node) => {
+          graph.clearItemStates(node, ['click', 'neighbourHover']);
+        });
+        graph.getEdges().forEach((edge) => {
+          graph.clearItemStates(edge, 'selected');
+        });
+
+        // 关闭侧边栏
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const s = new bootstrap.Collapse(sidebarMenu, {toggle: false});
+        s.hide();
+      });
+    };
+
+    main();
+  </script>
+</body>
+
+</html>

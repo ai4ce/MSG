@@ -1,0 +1,13 @@
+scipy
+roma
+torch>=2.0.0
+torchvision>=0.15.0
+transformers==4.32.1
+omegaconf
+torchmetrics==0.10.3
+fvcore
+iopath
+submitit
+wandb
+tqdm
+xformers>=0.0.18
