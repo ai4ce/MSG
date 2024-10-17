@@ -1,6 +1,6 @@
 # Multiview Scene Graph (NeurIPS 2024)
 This is the official implementation of 
->[Multiview Scene Graph](https://www.ai4ce.github.io/MSG) 
+>[Multiview Scene Graph](https://ai4ce.github.io/MSG/) 
 >
 >Juexiao Zhang, Gao Zhu, Sihang Li, Xinhao Liu, Haorui Song, Xinran Tang, Chen Feng
 >
