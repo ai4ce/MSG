@@ -200,8 +200,7 @@ if __name__ == '__main__':
     # show use case of MSGLocalizer
     # from localization import build_msg_localizer
     video_id = "41069042"
-    predicted_msg_file = "/home/jz4725/msg/exp-results/hpc-damsg-mse/2024-05-14_22-26-52/Test/41069042/eval_results.json"
-    # predicted_msg_file = "/home/jz4725/topomap/mini-val/41069042/refine_topo_gt.json"
+    predicted_msg_file = "./exp-results/aomsg/LOG_DATE/Test/41069042/eval_results.json"
     localizer = build_msg_localizer(
         msg_path = predicted_msg_file,
         video_id = video_id,
@@ -211,7 +210,7 @@ if __name__ == '__main__':
     )
     
     # # single check
-    # query_image_path = "/home/jz4725/topomap/mini-val/41069042/41069042_frames/lowres_wide/41069042_3048.737.png"
+    # query_image_path = "./data/msg/mini-val/41069042/41069042_frames/lowres_wide/41069042_3048.737.png"
     # loc, sim = localizer.localize( query_image_path)
     # print(loc)
     # print(sim.size(), len(localizer.frame2idx), len(localizer.frame_ids))
@@ -220,11 +219,11 @@ if __name__ == '__main__':
     # print(trueid, sim[trueid])
     
     # recall check
-    allquerys = [f for f in os.listdir(f"/home/jz4725/topomap/mini-val/{video_id}/{video_id}_frames/lowres_wide/") if f.endswith(".png")]
+    allquerys = [f for f in os.listdir(f"./data/msg/mini-val/{video_id}/{video_id}_frames/lowres_wide/") if f.endswith(".png")]
     recall = 0.
     for q in allquerys:
         frame_id = os.path.splitext(q)[0].split("_")[1]
-        query_image_path = os.path.join(f"/home/jz4725/topomap/mini-val/{video_id}/{video_id}_frames/lowres_wide/", q)
+        query_image_path = os.path.join(f"./data/msg/mini-val/{video_id}/{video_id}_frames/lowres_wide/", q)
         loc, _ = localizer.localize(query_image_path)
         if loc == frame_id:
             recall += 1

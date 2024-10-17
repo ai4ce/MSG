@@ -476,8 +476,6 @@ class Convert2DDataLoader(object):
         # im_height_scale = np.float(depth_height) / im_height
         # im_width_scale = np.float(depth_width) / im_width
 
-        # NOTE: this is important, need to figure it out
-        # why the depth image can have a different size?
         offset_H = 0
         offset_W = 0
         if depth_height != im_height:
@@ -498,7 +496,7 @@ class Convert2DDataLoader(object):
             self.world_coordinate,
             frame_pose,
         )
-        #NOTE: build pcd filter, only keep those in the acutal image for our 2d task
+        # build pcd filter, only keep those in the acutal image for our 2d task
         # also need to take care of coordinates later
         frame["offset_H"] = offset_H
         frame["offset_W"] = offset_W
@@ -511,7 +509,7 @@ class Convert2DDataLoader(object):
 
 def multi_work(video_ids):
     print("handling", len(video_ids), "videos from video", video_ids[0], video_ids[-1])
-    data_path = "/home/jz4725/topomap/"
+    data_path = "/home/arkitdata/"
     data_split = "Training"
     subset_stats = {
         "total_frames":0,
@@ -539,7 +537,7 @@ def multi_work(video_ids):
 
 
 if __name__ == "__main__":
-    data_path = "/home/jz4725/topomap/"
+    data_path = "/home/arkitdata/"
     data_split = "Training"
     videos = os.listdir(os.path.join(data_path, data_split))
     print(len(videos), "needs to be converted")

@@ -60,10 +60,15 @@ class MSGer(nn.Module):
         self.place_embedder = Embedders[config['place_embedder']['model']](
             freeze = config['place_embedder']['freeze'],
             weights = config['place_embedder']['weights'],
-            # if associator is AoMSG, always use seq (all tokens),
-            # else use whatever is specified
-            output_type = 'feature' if config['associator']['model'].startswith('AoMSG') else config['place_embedder']['output_type']
+            output_type = config['place_embedder']['output_type']
         )
+        
+        # determine the object embedding type
+        self.obj_embedder_type = None
+        if 'direct' in config['associator']['model']:
+            self.obj_embedder_type = 'direct'
+        else:
+            self.obj_embedder_type = 'feature'
 
         # update the loss keys to the associator
         loss_keys = ["pr_loss", "obj_loss", "temperature", "alpha", "gamma", "pos_weight", "pp_weight"]
@@ -85,22 +90,20 @@ class MSGer(nn.Module):
     def get_object_detections_fasterrcnn(self, batch_images, info):
         list_images = list(image for image in batch_images)
         detections = self.detector(list_images)
-        #NOTE: additional filtering?
+        #additional filtering?
         # detections = self.filter_lowconf_detection(detections)
-        # rescale bounding boxes?
         return detections
     
-    # HARD CODE PART
+    # NOTE USE PREVIOUSLY SAVED DETECTION RESULTS
     def build_groundingdino_detector(self, det_config):
         # self.detector = GDino(det_config["weights"], self.device, self.text_class)
         # if load saved detection results
         pass
 
     def get_object_detections_groundingdino(self, batch_images, info):
-        # breakpoint()
         # detections = self.detector(batch_images) # a wrapper for grounding dino prediction
         
-        # if load presaved detection results
+        # NOTE USE PREVIOUSLY SAVED DETECTION RESULTS
         bs = batch_images.size(0)
         pred_bboxes = info.get("pred_bbox", torch.empty((bs,0,4), dtype=torch.float).to(self.device))
         pred_bbox_masks = info.get("pred_bbox_mask", torch.empty((bs,0), dtype=torch.bool).to(self.device))
@@ -114,7 +117,6 @@ class MSGer(nn.Module):
                 'scores': torch.ones(bboxes[masks].shape[0]),
             })
         
-        # HARD CODE PART ENDS
         return detections
     
     def filter_lowconf_detection(self, detections, conf_threshold=0.5):
@@ -211,9 +213,6 @@ class MSGer(nn.Module):
                 boxes = random_shift_boxes(boxes, shift_ratio=0.3)
             list_boxes.append(boxes)
             batch_detects += det['boxes'].size(0)
-        # print("batch images", batch_images.size())
-        # all_crops = roi_align(batch_images, list_boxes, output_size=(224, 224))
-        # print("all crops", all_crops.size())
 
         # to avoid empty input
         if batch_detects > 0: 
@@ -266,19 +265,17 @@ class MSGer(nn.Module):
         
         # object embedding
         # list of B elements, each is a tensor of embeddings (K x Ho) of that image but in various lengths K.
-        # HARD CODE PART
-        # if direct evaluate feature vector
-        # embeddings = self.get_object_embeddings(images, detections)
-        # if transformer backbone
-        embeddings = self.get_object_embeddings_from_feature(place_embeddings[:,1:,:], detections)
-        # # if cnn backbone 
-        # embeddings = self.get_object_embeddings_from_feature(place_embeddings, detections)
-        # HARD CODE ENDS
-        
+        if self.obj_embedder_type == 'direct':
+            embeddings = self.get_object_embeddings(images, detections)
+        elif self.obj_embedder_type == 'feature':
+            if len(place_embeddings.size()) == 3: # transformer backbone
+                embeddings = self.get_object_embeddings_from_feature(place_embeddings[:,1:,:], detections)
+            else: # cnn backbone
+                embeddings = self.get_object_embeddings_from_feature(place_embeddings, detections)
+        else:
+            raise NotImplementedError        
         # get association: object correspondence and place recognition
 
-        # # previous
-        # results = self.association_model(embeddings, place_embeddings)
         # for decoder style msg
         boxes = [det['boxes'] for det in detections]
         results = self.association_model(embeddings, place_embeddings, boxes)

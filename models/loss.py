@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 # ----------------------------  supervision generation ----------------------------- #
-
+# reorder the object ids at gt_indices to pred_indices
 def get_match_idx(match_indices,
                   info,
                     N):
@@ -117,42 +117,6 @@ class InfoNCELoss(nn.Module):
         
         return loss
 
-class RidgeBCELoss(nn.Module):
-    """
-    Computes the Binary cross loss, 
-    but applu different temperature scaling to the diagnal and off diagnal terms
-
-    Hyper Parameters:
-        - temperature: A scalar controlling the sharpness of the distribution.
-        - diag_scale: scale the temperature for the diagonal, bias the learning towards off diagnal cases
-    """
-    def __init__(self, temperature=0.1, diag_scale = 2, learnable=False):
-        super(RidgeBCELoss, self).__init__()
-        self.temp = nn.Parameter(torch.ones(1) * temperature)
-        if learnable:
-            self.temp.requires_grad = True
-        else:
-            self.temp.requires_grad = False
-        self.diag_scale = diag_scale
-        self.bce_loss = nn.BCEWithLogitsLoss(reduction='none')
-    
-    def forward(self, predictions, supervision, mask):
-        """
-        The input logits are a NxN square matrix, we will apply the temperature to diag and off diag, then call the loss function
-        """
-        # # Calculate logits with temperature scaling
-        # logits = predictions_masked / self.temp
-        valid_predictions = predictions * mask
-        # diagnal temp scaler
-        size = valid_predictions.size(0)
-        diagnal_scaler = torch.ones(size, size, device=valid_predictions.device)
-        diagnal_scaler.diagonal(0).fill_(self.diag_scale)
-        logits = valid_predictions / self.temp / diagnal_scaler
-        loss = self.bce_loss(logits, supervision)
-        masked_loss = loss * mask
-        total_loss = masked_loss.sum() / (mask.sum() + 1e-9)
-        # print("learnable temp", self.temp)
-        return total_loss
     
 
 class MaskBCELoss(nn.Module):

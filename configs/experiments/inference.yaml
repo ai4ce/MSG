@@ -1,5 +1,5 @@
 # for realworld inference
-dataset_path: '/home/jz4725/topomap'
+dataset_path: './data/msg'
 device: 1
 pp_threshold: 0.3
 object_threshold: 0.2
@@ -7,7 +7,7 @@ object_threshold: 0.2
 eval_split: real
 
 # for eval
-eval_output_dir: './exp-results/hpc-damsg-mse/2024-05-14_22-26-52' # this is specific to trained checkpoints
+eval_output_dir: './exp-results/aomsg/LOG_DATE' # this is specific to trained checkpoints
 eval_chkpt: 29-step22470+.pth #null for no checkpoint
 save_every: True # if save specific results for every video
 vis_det: True
@@ -23,6 +23,7 @@ detector:
   freeze: True
   weights: DEFAULT
   pre_saved: True
+  result_path: "./exp-results/gdino-direct"
 
 obj_embedder:
   model: "dinov2-base" #"dinov2-small", "convnext-tiny-224", #'resnet50', # "dinov2_vits14", "dinov2_vitb14", "dinov2_vitl14", "dinov2_vitg14"
@@ -37,7 +38,7 @@ place_embedder:
   output_type: feature # mean, cls, feature
 
 associator:
-  model: "DaMSG-S-4" # "AoMSG-S-2"
+  model: "AoMSG-S-4" # "AoMSG-S-2"
   object_dim: 768 # FYI resnet18=512, dinov2-small=384, dinov2-base=768
   place_dim: 768
   output_dim: 1024

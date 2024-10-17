@@ -246,11 +246,13 @@ def inference_map(config, logger):
 if __name__ == '__main__':
     # get the config
     parser = argparse.ArgumentParser(description="Experiment configurations")
+    parser.add_argument("--dataset_path", type=str, help="Path to the dataset")
     parser.add_argument('--experiment', type=str, help='Name of the experiment config to use')
     parser.add_argument('--output_dir', type=str, help='Output directory to save the results')
     parser.add_argument('--output_file', type=str, help='Output file name')
     parser.add_argument('--device', type=int, help="specify device")
     parser.add_argument('--eval_split', type=str, help= "specify evaluation split")
+    parser.add_argument('--eval_output_dir', type=str, help="specify the eval model directory")
     parser.add_argument('--eval_chkpt', type=str, help="specify the checkpoint file")
     parser.add_argument('--vis_det', type=bool, help="if output frame visualization results")
     parser.add_argument('--object_threshold', type=float, help="specify object threshold if want")

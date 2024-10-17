@@ -87,7 +87,6 @@ class DecoderAssociator(nn.Module):
         else:
             self.obj_loss_fn = MaskMetricLoss()
             self.measure_cos_obj = True
-        # self.obj_loss_fn = RidgeBCELoss(temperature=0.1, diag_scale=2, learnable=True)
         self.obj_loss_fn_sim = MeanSimilarityLoss()
         self.obj_tcr = TotalCodingRate(eps=0.2)
 
@@ -98,8 +97,6 @@ class DecoderAssociator(nn.Module):
         
         self.apply(self._init_weights)
 
-        # TODO: determine the number of tokens
-        # print(self.max_num_objects, self.num_img_patches)
         grid_size = int(self.num_img_patches**.5)
         pos_embed = get_2d_sincos_pos_embed(
             embed_dim=self.pos_embed.shape[-1], 
@@ -225,7 +222,7 @@ class DecoderAssociator(nn.Module):
         return object_predictions  
     
     def predict_place(self, place):
-        # simple cosine similarity; TODO: other options can be vlad or netvlad etc. loop closure detection methods
+        # simple cosine similarity
 
         # place_predictions: B x B
         if self.measure_cos_pp:
@@ -276,6 +273,8 @@ class DecoderAssociator(nn.Module):
         """
         input:
             object_predictions: BN x BN, cosine similarity matrix
+            reorder_idx: BN, padded, reordered gt_indices to match the pred_indices
+        intermediate:
             supervision_matrix: BN x BN, binary matrix indicating the object association
             mask: BN x BN, binary matrix indicating the valid entries in the supervision_matrix
         output:

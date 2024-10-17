@@ -5,15 +5,9 @@ import json
 import torch
 from scipy.optimize import linear_sum_assignment
 # from model import TopoMapper
-
-from torch.utils.data import DataLoader
-from arkit_config import arkit_config
 # from arkit_dataset import AppleDataHandler, VideoDataset, arkit_collate_fn
 
 import numpy as np
-import supervision as sv
-import cv2
-from torchvision.ops import box_convert
 
 
 class TopoMapperHandler(object):
@@ -56,9 +50,6 @@ class TopoMapperHandler(object):
         if bboxes.size(0) > 0 or object_embeddings.size(0)>0:
             self.object_bank = {} # stores object_id: (frame_id, bbox) and other info, like tracking
             # initialize the object feature bank
-            # print("========== init ==========")
-            # print("uids", uids)
-            # print("**************************")
 
             object_feature_bank = list() # stores bank[object_id] = feature
             for bbox, obj_embed, label, score, uid in zip(bboxes, object_embeddings, labels, scores, uids):
@@ -128,12 +119,6 @@ class TopoMapperHandler(object):
         # print("hm query ids", query_ids)
         # print("hm existing ids", existing_ids)
         
-        # #NOTE: for debugging purposes: ground truth assignment
-        # query_ids, existing_ids = self.gt_object_assignment(uids)
-        # print("gt query ids", query_ids)
-        # print("gt existing ids", existing_ids)
-        # print("***************************************")
-        
         # closest matching
         # query_ids, existing_ids = self.closest_object_assignment(obj_sim)
 
@@ -142,14 +127,12 @@ class TopoMapperHandler(object):
             matched_obj_id = existing_ids[i]
             query_id = query_ids[i] # shoud be the same as i
 
-            # NOTE: IF TRUE for debugging purposes:
-            # if True:
             if obj_sim[query_ids[i], matched_obj_id] > self.object_threshold:
                 # print(f"at image {image_id}, new {query_ids[i]} matched with existing {matched_obj_id} with sim {obj_sim[query_ids[i], matched_obj_id]}")
                 # remove from the unmatched obj queries
                 unmatched_obj_queries.remove(query_id)
                 # append to the object bank
-                #NOTE: if uid is included:
+                # if uid is included:
                 uniq_label = self.label2class[labels[query_id].item()] + f":{int(uids[query_id])}"
                 self.object_bank[matched_obj_id]['appearance'].append((image_id, bboxes[query_id], labels[query_id], scores[query_id], uniq_label))
                 # update the object feature bank with the new object embedding, weighed / unweighted average
@@ -217,11 +200,6 @@ class TopoMapperHandler(object):
                 self.object_init(list_results[idx]['image_id'], list_results[idx]['detections'], list_results[idx]['object_embeddings'])
             else:
                 self.object_update(list_results[idx]['image_id'], list_results[idx]['detections'], list_results[idx]['object_embeddings'])
-        
-    def output_det(self):
-        """
-        Output detection annotated frame to the result dir of the corresponding video
-        """
 
         
     def output_mapping(self, save_pp_sim=False, save_emb_dir=None):
@@ -265,7 +243,7 @@ class TopoMapperHandler(object):
 
 
 
-## version 2:
+## version 2: NOT USED. LEAVE FOR REFERENCE. COULD BE USED TO GET EMBEDDINGS FOR PLOTTING
 ## store all the object appearance, and do cluster ALL TOGEHTER in the end
 
 from sklearn.cluster import DBSCAN
@@ -344,7 +322,7 @@ class TopoMapperv2(object):
         for i in range(batch_data['image_idx'].size(0)):
             list_results.append({
                 'image_id': batch_data['image_idx'][i],
-                'detections': batch_results['detections'][i], #TODO: check structure if it is Kx4
+                'detections': batch_results['detections'][i], 
                 'object_embeddings': batch_results['embeddings'][i, :batch_results['detections'][i]['boxes'].size(0), :], # unpadding, get K x Ho
                 'place_embeddings': batch_results['place_embeddings'][i], # Hp
                 #'gt_bboxes'

@@ -1,9 +1,8 @@
-dataset_path: '/home/jz4725/topomap' # dataset dir on hpc
 # sample style training script
-device: 1
+dataset_path: './data/msg'
+device: 0
 pp_threshold: 0.0
 object_threshold: 0.0
-# coefficients for multitasking loss
 loss_params:
   pr: 1.0
   obj: 1.0
@@ -19,10 +18,10 @@ wandb: True
 
 # if resume training from a chkpt
 resume: False
-resume_path: './exp-results/sep-multivid/2024-04-29_00-35-27/checkpoints/29-step22470+.pth'
+resume_path: './exp-results/sep-multivid/LOG_DATE/checkpoints/0-step3200+.pth'
 
-eval_output_dir: '/home/jz4725/msg/exp-results/sep_ckpt' # this is specific to trained checkpoints
-eval_chkpt:  sep_linear.pth #null for no checkpoint
+eval_output_dir: './exp-results/sep-multivid/LOG_DATE' # this is specific to trained checkpoints
+eval_chkpt: 0-3200+.pth #null for no checkpoint
 save_every: False # if save specific results for every video
 # to enable eval during training, set eval_step > 0
 eval_step: 300
@@ -30,12 +29,12 @@ eval_step: 300
 learning_rate: 0.00005
 num_epochs: 30
 warmup_epochs: 3
-warmup: cos
+warmup: no # cos
 
-num_workers: 10
-train_bs: 384
-bs_video: 6 # number of videos per batch
-eval_bs: 64 # debug test
+num_workers: 4
+train_bs: 192
+bs_video: 3 # number of videos per batch
+eval_bs: 64 
 
 log_every: 1
 chkpt_every: 3000
@@ -61,5 +60,3 @@ associator:
 # loss terms
 pr_loss: mse
 obj_loss: mse
-pos_weight: 10
-pp_weight: 1

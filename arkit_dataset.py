@@ -83,7 +83,7 @@ class VideoDataset(Dataset):
         self.use_gdino = False
         if configs["detector"]["model"] == "grounding-dino":
             self.use_gdino = True
-            gdino_file = os.path.join('./exp-results/gdino-direct', split, video_id, 'eval_results.json')
+            gdino_file = os.path.join(configs["detector"]["result_path"], split, video_id, 'eval_results.json')
             self.gdino_det = json.load(open(gdino_file))
 
 
@@ -134,7 +134,7 @@ class VideoDataset(Dataset):
         bboxes = []
         obj_labels = []
         frame_id = str(frame_id)
-        if frame_id in self.gdino_det['detections']: #NOTE: else this frame has no gt objct detections.
+        if frame_id in self.gdino_det['detections']:
             det_dict = self.gdino_det['detections'][frame_id]
             for obj_id, det in det_dict.items():
                 # print(obj_id, type(obj_id))
@@ -320,31 +320,28 @@ def arkit_collate_fn(batch):
     batch_obj_ids = pad_sequence([item['obj_idx'] for item in batch], batch_first=True, padding_value=-1)
     batch_obj_labels = pad_sequence([item['obj_label'] for item in batch], batch_first=True, padding_value=-1)
     # mask for padding
-    # batch_mask = generate_mask(batch_obj_ids, pad_value=-1)
-    # alternatively, mask for padding
     batch_mask = (batch_obj_ids != -1)
     
     batch_img_idx = torch.stack([item['image_idx'] for item in batch])
     
-    # # HARD CODE PART for pre-saved grounding dino results, for faster run
-    # # # pred bbox
-    # batch_pred_bbox = pad_sequence([item['pred_bbox'] for item in batch if "pred_bbox" in item], batch_first=True, padding_value=-1)
-    # batch_pred_bbox_mask = (batch_pred_bbox != -1).any(dim=2)
-    # # HARD CODE ENDS
-
-    return {
+    ret = {
         'image': batch_images, # B x 3 x H x W
         'image_idx': batch_img_idx, # B
         'bbox': batch_bboxes, # B x padded N1 x 4
         'obj_idx': batch_obj_ids, # B x padded N1
         'obj_label': batch_obj_labels, # B x padded N1
         'mask': batch_mask, # B x padded N1
-        # 'place_label': batch_place_labels, # B
-        # # HARD CODE PART for pre-saved grounding dino results, for faster run
-        # 'pred_bbox': batch_pred_bbox, # gdino detection results
-        # 'pred_bbox_mask': batch_pred_bbox_mask,
-        # # HARD CODE ENDS
     }
+    
+    if "pred_bbox" in batch[0]:
+        batch_pred_bbox = pad_sequence([item['pred_bbox'] for item in batch], batch_first=True, padding_value=-1)
+        batch_pred_bbox_mask = (batch_pred_bbox != -1).any(dim=2)
+    
+        ret['pred_bbox'] = batch_pred_bbox
+        ret['pred_bbox_mask'] = batch_pred_bbox_mask
+    
+    return ret
+    
 
 
 ######################################################
@@ -371,7 +368,7 @@ class SimpleDataset(Dataset):
         if configs["detector"]["model"] == "grounding-dino":
             if configs["detector"]["pre_saved"]:
                 self.use_gdino = True
-                gdino_file = os.path.join('./exp-results/gdino-direct', split, video_id, 'eval_results.json')
+                gdino_file = os.path.join(configs["detector"]["result_path"], split, video_id, 'eval_results.json')
                 self.gdino_det = json.load(open(gdino_file))
 
 
@@ -391,7 +388,7 @@ class SimpleDataset(Dataset):
         bboxes = []
         obj_labels = []
         frame_id = str(frame_id)
-        if frame_id in self.gdino_det['detections']: #NOTE: else this frame has no gt objct detections.
+        if frame_id in self.gdino_det['detections']: 
             det_dict = self.gdino_det['detections'][frame_id]
             if isinstance(det_dict, dict):
                 for obj_id, det in det_dict.items():
@@ -454,21 +451,19 @@ def simple_collate_fn(batch):
     
     batch_img_idx = torch.stack([item['image_idx'] for item in batch])
     
-    # HARD CODE PART for pre-saved grounding dino results, for faster run
-    # # pred bbox
-    batch_pred_bbox = pad_sequence([item['pred_bbox'] for item in batch if "pred_bbox" in item], batch_first=True, padding_value=-1)
-    batch_pred_bbox_mask = (batch_pred_bbox != -1).any(dim=2)
-    batch_pred_label = pad_sequence([item['pred_label'] for item in batch if "pred_label" in item], batch_first=True, padding_value=-1)
-    # HARD CODE ENDS
-
-    return {
+    ret = {
         'image': batch_images, # B x 3 x H x W
         'image_idx': batch_img_idx, # B
-        # 'place_label': batch_place_labels, # B
-        
-        # HARD CODE PART for pre-saved grounding dino results, for faster run
-        'pred_bbox': batch_pred_bbox, # gdino detection results
-        'pred_bbox_mask': batch_pred_bbox_mask,
-        'pred_label': batch_pred_label,
-        # HARD CODE ENDS
     }
+    
+    if "pred_bbox" in batch[0]:
+        batch_pred_bbox = pad_sequence([item['pred_bbox'] for item in batch], batch_first=True, padding_value=-1)
+        batch_pred_bbox_mask = (batch_pred_bbox != -1).any(dim=2)
+        batch_pred_label = pad_sequence([item['pred_label'] for item in batch], batch_first=True, padding_value=-1)
+        
+        ret['pred_bbox'] = batch_pred_bbox
+        ret['pred_bbox_mask'] = batch_pred_bbox_mask
+        ret['pred_label'] = batch_pred_label
+        
+    return ret
+        

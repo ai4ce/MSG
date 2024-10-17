@@ -1,4 +1,4 @@
-dataset_path: '/topomap/' #'../topomap-example-data/',
+dataset_path: './arkitdata/'
 # annotation file: refine_topo_gt.json
 all_splits: ['Training', 'Validation', 'Test', 'mini-val']
 image_size: [192, 256] # NOTE this is different from the conventional 224x224, transformation needed to be compatible with the models.

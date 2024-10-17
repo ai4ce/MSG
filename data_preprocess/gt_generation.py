@@ -6,9 +6,6 @@ import roma
 import torch
 from tqdm import tqdm
 from preprocess_utils import TrajStringToMatrix
-# data_path = "/mnt/NAS/data/zjx/ARKitData/3dod/"
-# data_split = "Validation"
-# vids = os.listdir(os.path.join(data_path, data_split))
 
 
 # given a video, extract all the poses it got
@@ -99,8 +96,8 @@ def make_data(vid, data_path, data_split, frame_every=10, rot_thres=1.0, trans_t
     rot_diff, trans_diff = pairwise_diff(sampled_poses)
     rot_max = rot_diff.max()
     trans_max = trans_diff.max()
-#     rot_thres = 1.0 #0.8 # 1.0
-#     trans_thres = 1.0 #0.5
+    # rot_thres = 1.0 #0.8 # 1.0
+    # trans_thres = 1.0 #0.5
     adjcency = place_adj(rot_diff, trans_diff, rot_thres, trans_thres)
     adjcency = adjcency.type(torch.int)
     adjcency = adjcency - torch.eye(adjcency.shape[0], dtype=torch.int)
@@ -131,7 +128,7 @@ def make_data(vid, data_path, data_split, frame_every=10, rot_thres=1.0, trans_t
         anos = annos[frame_id]
         frame2annos[frame_id] = dict()
         for a in anos:
-            # skipping small boudning boxes, thresholds: 10 % of H and W
+            # skipping small bounding boxes, thresholds: 10 % of H and W
             xmin, ymin, xmax, ymax = a['bbox']
             xx = abs(xmax - xmin)
             yy = abs(ymax - ymin)
@@ -164,7 +161,6 @@ def make_data(vid, data_path, data_split, frame_every=10, rot_thres=1.0, trans_t
             continue
         annos_frame = annos[frame_id]
         for ano in annos_frame:
-            # if ano["uid"] in obj2col: -> BUG fix: filter out small detection bbox
             if ano["uid"] in obj2col and ano["uid"] in frame2annos[frame_id]:
                 cid = obj2col[ano["uid"]]
                 PO_adc[rid, cid] = 1
@@ -179,13 +175,9 @@ def make_data(vid, data_path, data_split, frame_every=10, rot_thres=1.0, trans_t
     # meta data recording frame stats
     record['noobj_frames'] = no_obj
     record['allsmall_frames'] = all_small
-    # bounding box: which obj at which frame, what bounding box: 
-    # can be the previous 2d annotation {frameid: obj info},
-    # but needs better lookup efficiency: frameids-uid-bbox
     return record
 
 def get_gt_po(gt):
-        # obtain groundtruth p-o adj. Only run this exactly once is enough. Bug should be fixed later!!
         num_frames = len(gt['sampled_frames'])
         num_obj = len(gt['obj2col'])
         frame2row = {frame_id: idx for idx, frame_id in enumerate(gt['sampled_frames'])}
@@ -211,7 +203,6 @@ def regen_po_adj(data_dir, sub_dirs, filtered_video):
             json.dump(gt, open(topo_gt_path, 'w'))
 
 def get_gt_po(gt):
-        # obtain groundtruth p-o adj. Only run this exactly once is enough. Bug should be fixed later!!
         num_frames = len(gt['sampled_frames'])
         num_obj = len(gt['obj2col'])
         frame2row = {frame_id: idx for idx, frame_id in enumerate(gt['sampled_frames'])}
@@ -238,7 +229,7 @@ def regen_po_adj(data_dir, sub_dirs, filtered_video):
             
 
 if __name__ == "__main__":
-    data_path = "/home/jz4725/topomap/" # "/mnt/NAS/data/zjx/ARKitData/topomap/"
+    data_path = "/home/arkitdata/"
     data_split = ['Validation', 'Training', 'Test', 'mini-val'] #"Training"
     # vids = os.listdir(os.path.join(data_path, data_split))
     # print(len(vids), "needs to be converted")

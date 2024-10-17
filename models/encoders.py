@@ -4,7 +4,7 @@ import torch.nn as nn
 import numpy as np
 import torch.nn.functional as F
 
-from torchvision.models import resnet50, resnet18, convnext_tiny, convnext_small, convnext_base, vit_b_16
+from torchvision.models import resnet50, resnet18, convnext_tiny, convnext_small, convnext_base
 # from transformers import AutoImageProcessor, ConvNextModel
 from transformers import Dinov2Model, ViTModel
 
@@ -272,10 +272,7 @@ Embedders = {
     'convnext-base': ConvNextBase_Embedder,
     'dinov2-small': DINOv2Small_Embedder,
     'dinov2-base': DINOv2Base_Embedder,
-    # 'dinov2-small-reg': DINOv2SmallReg_Embedder,
-    # 'dinov2-base-reg': DINOv2BaseReg_Embedder,
     'dinov2-large': DINOv2Large_Embedder,
-    # 'dinov2-huge': DINOv2Huge_Embedder,
     'vit-base': ViTBase_Embedder,
     'vit-large': ViTLarge_Embedder,
     'vit-huge': ViTHuge_Embedder

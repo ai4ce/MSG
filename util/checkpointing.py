@@ -42,7 +42,7 @@ def load_checkpoint(model: nn.Module, checkpoint_path: str, optimizer: torch.opt
         if module_name in checkpoint['state_dict']:
             state_info = checkpoint['state_dict'][module_name]
             if isinstance(state_info, dict):  # The module needs to be updated
-                module.load_state_dict(state_info)
+                module.load_state_dict(state_info, strict=False)
                 logger.info(f"load {module_name}")
             else:
                 print(module_name, state_info)

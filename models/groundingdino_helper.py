@@ -16,9 +16,9 @@ import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
-MODEL_CONFIG_PATH = "/mnt/NAS/home/zjx/GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
+MODEL_CONFIG_PATH = "./GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
 
-DEFAULT_WEIGHT_PATH = "/mnt/NAS/home/zjx/GroundingDINO/weights/groundingdino_swint_ogc.pth"
+DEFAULT_WEIGHT_PATH = "./GroundingDINO/weights/groundingdino_swint_ogc.pth"
 
 class GDino(nn.Module):
     def __init__(self, weight_path, device, text_class, input_size=(224, 224), output_size=800, max_size=1333):

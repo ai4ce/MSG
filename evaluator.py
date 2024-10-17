@@ -8,11 +8,10 @@ import numpy as np
 from scipy.optimize import linear_sum_assignment
 
 import supervision as sv
-# Filter the warning within the supervision library
-# sv.utils.py_utils.warnings.filterwarnings("ignore", category=DeprecationWarning, message="BoxAnnotator is deprecated")
+
 import warnings
 warnings.filterwarnings("ignore", module="supervision.*")
-# warnings.filterwarnings("ignore", category=DeprecationWarning, message="BoxAnnotator is deprecated")
+
 import cv2
 import torch
 import os
@@ -82,10 +81,9 @@ class Evaluator(object):
         self.frame_dir = os.path.join(self.video_data_dir, self.video_id+'_frames', 'lowres_wide')
 
         self.matched_gt_indices = None
-        # self.get_gt_po()
+        self.get_gt_po()
 
     def get_gt_po(self,):
-        # obtain groundtruth p-o adj. Only run this exactly once is enough. Bug should be fixed later!!
         num_frames = len(self.gt['sampled_frames'])
         num_obj = len(self.gt['obj2col'])
         po_adj = np.zeros((num_frames, num_obj), dtype=int)
@@ -157,7 +155,7 @@ class Evaluator(object):
                 num_match = len(ious_match)
                 num_mismatch = len(ious) - num_match
                 # get the similarity score
-                # NOTE fp and np are be included in the denominator
+                # NOTE fp and np are included in the denominator
                 # print(gt_obj_id, pred_obj_id, num_match, num_mismatch, np.sum(ious_match))
                 score_mat[gt_idx, pred_idx] = np.sum(ious_match) / (num_match + num_mismatch + false_negative + false_positive) 
         
@@ -185,7 +183,7 @@ class Evaluator(object):
         for gt_obj_id, pred_obj_id in self.obj_match.items():
             print(gt_obj_id, pred_obj_id)
 
-    #TODO: calculate the precision and recall
+
     def get_place_recall(self,):
         assert "pp-sim" in self.pred, (list(self.pred.keys()))
         recall = 0
@@ -204,12 +202,6 @@ class Evaluator(object):
         recall = recall/dim
         return recall
         
-
-    def get_average_precision(self,):
-        pass
-
-    def get_object_detection_performance(self,):
-        pass
 
     # visualize the detection results
     # det type: faster rcnn, grounding dino, gt
@@ -280,14 +272,6 @@ class Evaluator(object):
         reordered_indices = self.matched_gt_indices + remaining_indices
         gt_po_adj = ori_gt_po_adj[:, reordered_indices]
 
-        # take maximum shape, only the columns could be different -> NOT FAIR
-        # max_col = np.maximum(gt_po_adj.shape[1], pred_po_adj.shape[1])
-        # gt_po_adj = np.pad(gt_po_adj, ((0,0), (0, max_col-gt_po_adj.shape[1])), 'constant')
-        # pred_po_adj = np.pad(pred_po_adj, ((0,0), (0, max_col-pred_po_adj.shape[1])), 'constant')
-        # self.po_intersection = np.sum(np.bitwise_and(gt_po_adj, pred_po_adj))
-        # self.po_union = np.sum(np.bitwise_or(gt_po_adj, pred_po_adj))
-        # self.po_iou = self.po_intersection / self.po_union
-
         # take the min, use extra 1's as penalizer
         min_col = np.minimum(gt_po_adj.shape[1], pred_po_adj.shape[1])
         # print("num objects, gt:", gt_po_adj.shape[1], "pred:", pred_po_adj.shape[1])
@@ -340,49 +324,3 @@ class Evaluator(object):
             # 'place_recall': self.get_place_recall()
             
         }
-
-
-
-    
-if __name__ == "__main__":
-    from arkit_config import arkit_config as config
-    from arkit_dataset import AppleDataHandler
-    import json
-    arkit_data = AppleDataHandler(config['dataset_path'], split=config['split'])
-    print("Number of videos in the validation set: {}".format(len(arkit_data)))
-    print("evaluating: ", config['output_file'], "detector", config['detector']['model'])
-    eval_results = dict()
-    for i, next_video_id in enumerate(arkit_data.videos):
-        print("Processing video {}, progress {}/{}".format(next_video_id, i, len(arkit_data)))
-        next_video_path = os.path.join(arkit_data.data_split_dir, next_video_id)
-        gt = json.load(open(os.path.join(next_video_path, 'refine_topo_gt.json')))
-        pred_result_path = os.path.join(config['eval_output_dir'], config['split'], next_video_id, config['output_file'])
-        pred = json.load(open(pred_result_path))
-        evaluator = Evaluator(video_data_dir=next_video_path, 
-                                video_id=next_video_id, 
-                                gt=gt, 
-                                pred=pred, 
-                                out_path=os.path.dirname(pred_result_path),
-                                inv_class_map = config['inv_class_map'],
-                                )
-        if config['vis_det']:
-            evaluator.visualize_det(det_type=config['detector']['model'])
-        eval_result_per_video = evaluator.get_metrics()
-        print(next_video_id, eval_result_per_video)
-        eval_results[next_video_id] = eval_result_per_video
-        # break
-    avg_pp = 0.
-    avg_po = 0.
-    avg_graph = 0.
-    avg_recall = 0.
-    for vid, res in eval_results.items():
-        avg_pp += res['pp_iou']
-        avg_po += res['po_iou']
-        avg_graph += res['graph_iou']
-        avg_recall += res['place_recall']
-    avg_pp /= len(eval_results)
-    avg_po /= len(eval_results)
-    avg_graph /= len(eval_results)
-    avg_recall /= len(eval_results)
-    print("avg pp:", avg_pp, "avg_po:", avg_po, "avg_graph", avg_graph, "avg_recall", avg_recall)
-    
