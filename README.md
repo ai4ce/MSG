@@ -6,7 +6,7 @@ This is the official implementation of
 >
 > New York University
 
-### [**[Project page]**](https://www.ai4ce.github.io/MSG) **|** [**[Paper]**](https://arxiv.org/abs/2410.11187)
+### [**[Project page]**](https://ai4ce.github.io/MSG) **|** [**[Paper]**](https://arxiv.org/abs/2410.11187)
 
 ![teaser](./media/teaser.jpg)
 ## Implementations
