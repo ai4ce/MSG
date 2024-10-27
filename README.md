@@ -9,6 +9,7 @@ This is the official implementation of
 ### [**[Project page]**](https://www.ai4ce.github.io/MSG) **|** [**[Paper]**](https://arxiv.org/abs/2410.11187)
 
 ![teaser](./media/teaser.jpg)
+![show](./media/scene1.gif)
 ## Implementations
 ### Requirements
 
@@ -35,7 +36,7 @@ MSG data is converted from Apple's [ARKitScenes](https://github.com/apple/ARKitS
 The converted dataset can be found at this [Dataset Hub](https://huggingface.co/datasets/ai4ce/MSG) on Huggingface.
 We have also kept the code snippets for data convertion in `data_preprocess`.
 
-To use the data, download the data to `./data/msg`
+To use the data, download and unzip the data to `./data/msg`
 - [ ] TODO: specify the data usage. 
 
 ```shell
