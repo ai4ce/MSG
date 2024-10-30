@@ -9,7 +9,9 @@ This is the official implementation of
 ### [**[Project page]**](https://ai4ce.github.io/MSG) **|** [**[Paper]**](https://arxiv.org/abs/2410.11187)
 
 ![teaser](./media/teaser.jpg)
-![show](./media/scene1.gif)
+<div style="text-align: center;">
+  <img src="media/scene1.gif" alt="Description of GIF">
+</div>
 ## Implementations
 ### Requirements
 
