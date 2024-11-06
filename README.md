@@ -12,6 +12,7 @@ This is the official implementation of
 <div style="text-align: center;">
   <img src="media/scene1.gif" alt="Description of GIF">
 </div>
+
 ## Implementations
 ### Requirements
 
