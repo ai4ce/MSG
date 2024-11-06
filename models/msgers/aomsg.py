@@ -5,7 +5,7 @@ import torch.nn as nn
 from torch.nn.utils.rnn import pad_sequence
 from models.loss import get_match_idx, get_association_sv
 import numpy as np
-from models.loss import InfoNCELoss, RidgeBCELoss, MaskBCELoss, FocalLoss, MaskMetricLoss, MeanSimilarityLoss, TotalCodingRate
+from models.loss import InfoNCELoss, MaskBCELoss, FocalLoss, MaskMetricLoss, MeanSimilarityLoss, TotalCodingRate
 
 class DecoderAssociator(nn.Module):
     def __init__(self, hidden_dim, output_dim, num_heads, num_layers, object_dim, place_dim, 

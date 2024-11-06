@@ -10,7 +10,7 @@ from models.matcher import HungarianMatcher
 from models.encoders import Embedders
 from models.associate import Asso_models
 
-from models.groundingdino_helper import GDino
+# from models.groundingdino_helper import GDino
 
 from util.box_utils import enlarge_boxes, random_shift_boxes
 
