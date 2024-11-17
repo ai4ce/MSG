@@ -177,7 +177,7 @@ def build_msg_localizer(msg_path, video_id, model_path=None, experiment_mode="lo
     data_split_dir = os.path.join(config["dataset_path"], config["eval_split"])
     video_path = os.path.join(data_split_dir, video_id)
     transforms = get_transform(config['model_image_size'])
-    dataset = SimpleDataset(data_split_dir, video_id, config, transforms, split=config['eval_split'])
+    dataset = SimpleDataset(data_split_dir, video_id, config, transforms, split=data_split_dir)
     
     # initialize
     localizer = MSGLocalizer(

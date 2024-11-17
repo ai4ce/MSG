@@ -20,3 +20,4 @@ torch==2.2.1
 torchvision==0.17.1
 tqdm==4.66.2
 transformers==4.32.1
+astunparse==1.6.3
