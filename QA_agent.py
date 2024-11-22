@@ -15,15 +15,13 @@ from pygments.formatters import TerminalFormatter
 import heapq
 import base64
 
-#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 import localization 
 from localization import build_msg_localizer
 
 
 video_id = "41069042"
-#predicted_msg_file = "/home/jz4725/msg/exp-results/hpc-damsg-mse/2024-05-14_22-26-52/Test/41069042/eval_results.json"
-predicted_msg_file = "./QA_agent/mini-val/" + video_id + "/refine_topo_gt.json"
+msg_file_path = "YOUR_MSG_FILE_PATH"
+predicted_msg_file = msg_file_path + "/" + video_id + "/refine_topo_gt.json"
 localizer = build_msg_localizer(
     msg_path = predicted_msg_file,
     video_id = video_id,
@@ -343,7 +341,7 @@ class LMP_wrapper():
         num_rows = (num_images + num_cols - 1) // num_cols  
 
         plt.figure(figsize=(15, num_rows * 5))
-        image_paths = ['./QA_agent/mini-val/' + video_id + '/' + video_id + '_frames/lowres_wide/' + video_id + '_' + frame_number + '.png' for frame_number in frame_list]
+        image_paths = [msg_file_path + '/' + video_id + '/' + video_id + '_frames/lowres_wide/' + video_id + '_' + frame_number + '.png' for frame_number in frame_list]
 
         for i, image_path in enumerate(image_paths):
             if os.path.exists(image_path):
@@ -446,7 +444,7 @@ class LMP_wrapper():
         return response.choices[0].message.content
     
     def vlm(self, frame_number, text):
-        image_path = "./QA_agent/mini-val/" + video_id + "/" + video_id + '_frames/lowres_wide/' + video_id + '_' + frame_number + '.png'
+        image_path = msg_file_path + "/" + video_id + "/" + video_id + '_frames/lowres_wide/' + video_id + '_' + frame_number + '.png'
         with open(image_path, "rb") as image_file:
             img = base64.b64encode(image_file.read()).decode('utf-8')
 
