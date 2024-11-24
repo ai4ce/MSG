@@ -109,13 +109,12 @@ python eval.py --experiment direct
 
 ## BibTex
 ```
-@misc{zhang2024multiviewscenegraph,
-      title={Multiview Scene Graph}, 
-      author={Juexiao Zhang and Gao Zhu and Sihang Li and Xinhao Liu and Haorui Song and Xinran Tang and Chen Feng},
-      year={2024},
-      eprint={2410.11187},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2410.11187}, 
+@inproceedings{
+zhang2024multiview,
+title={Multiview Scene Graph},
+author={Juexiao Zhang and Gao Zhu and Sihang Li and Xinhao Liu and Haorui Song and Xinran Tang and Chen Feng},
+booktitle={The Thirty-eighth Annual Conference on Neural Information Processing Systems},
+year={2024},
+url={https://openreview.net/forum?id=1ELFGSNBGC}
 }
 ```
