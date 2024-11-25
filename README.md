@@ -19,7 +19,7 @@ This is the official implementation of
 First, setup the environment by running
 ```shell
 git clone https://github.com/ai4ce/MSG.git
-cd msg
+cd MSG
 conda create --name msg python=3.11.8
 conda activate msg
 pip install -r requirements.txt
@@ -29,7 +29,7 @@ This `requirements.txt` contains minimum dependencies estimated by running `pipr
 *Alternatively*, to fully replicate the environment you can also run:
 ```shell
 git clone https://github.com/ai4ce/MSG.git
-cd msg
+cd MSG
 conda env create -f environment.yml
 conda activate msg
 ```

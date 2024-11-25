@@ -2,14 +2,13 @@
 fuzzywuzzy==0.18.0
 matplotlib==3.8.3
 networkx==3.2.1
-numpy==2.1.2
+numpy>=1.21, <2
 open3d==0.18.0
 openai==1.51.2
 opencv_python==4.9.0.80
 opencv_python_headless==4.9.0.80
 Pillow==11.0.0
 Pygments==2.18.0
-PyYAML==6.0.1
 PyYAML==6.0.2
 roma==1.4.4
 scikit_learn==1.4.2
@@ -21,3 +20,4 @@ torch==2.2.1
 torchvision==0.17.1
 tqdm==4.66.2
 transformers==4.32.1
+astunparse==1.6.3

@@ -1,2 +1,4 @@
 .DS_Store
 __pycache__
+/home/cl6933/MSG/QA_agent/mini-val
+.pth
