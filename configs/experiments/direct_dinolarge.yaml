@@ -1,0 +1,41 @@
+dataset_path: './data/msg' 
+device: 0
+pp_threshold: 0.5
+object_threshold: 0.3
+
+eval_split: Test
+# train_split: Training
+
+output_dir: './exp-results/direct-dinov3-large'
+output_file: 'direct-dinov3-large'
+# wandb: True
+
+resume: False
+
+eval_output_dir: './exp-results/direct-dinov3-large'
+eval_chkpt: null
+
+save_every: True # if save specific results for every video
+
+num_workers: 4
+# train_bs: 32
+eval_bs: 64 # debug test
+
+
+obj_embedder:
+  model: "dinov3-large" #"dinov2-small", "dinov2-base", "convnext-tiny-224", #'resnet50'
+  weights: DEFAULT
+  freeze: True
+  output_type: mean
+
+place_embedder:
+  model: "dinov3-large" #"convnext-tiny", #'resnet50', # "dinov2-small", # "dinov2-base"
+  weights: DEFAULT
+  freeze: True
+  output_type: cls # mean, cls, feature, vec
+
+associator:
+  model: "SepMSG-direct" # "AoMSG-S-2"
+  object_dim: 384 # FYI dinov2-small 384, dinov2-base 768
+  place_dim: 384
+  output_dim: null

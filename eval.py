@@ -69,7 +69,6 @@ def eval_per_video(dataset, dataloader, config, mapper, model, device, backproc,
 
     with torch.no_grad():
         for batch in tqdm(dataloader):
-            # print(batch)
             images = batch['image'].to(device)
             # potentially pass more information to the model
             additional_info = {
@@ -85,6 +84,7 @@ def eval_per_video(dataset, dataloader, config, mapper, model, device, backproc,
             if 'pred_bbox' in batch:
                 additional_info['pred_bbox'] = batch['pred_bbox'].to(device)
                 additional_info['pred_bbox_mask'] = batch['pred_bbox_mask'].to(device)
+                additional_info['pred_label'] = batch['pred_label'].to(device)
                 
             results = model(images, additional_info)
 

@@ -6,7 +6,7 @@ import torch.nn.functional as F
 
 from torchvision.models import resnet50, resnet18, convnext_tiny, convnext_small, convnext_base
 # from transformers import AutoImageProcessor, ConvNextModel
-from transformers import Dinov2Model, ViTModel
+from transformers import Dinov2Model, ViTModel, AutoModel, AutoImageProcessor
 
 
 class ResNetEmbedder(nn.Module):
@@ -218,6 +218,93 @@ class DINOv2Embedder(nn.Module):
         # print("dino emb", embs.size())
         # embs = last_hidden_states[:, 1:, :].mean(dim=1) # B x h, NOTE: its an average over all image tokens
         embs = self.adaptor(embs)
+        return embs
+
+
+class DINOv3Embedder(nn.Module):
+    # output type: cls or mean of the tokens, or perhaps tokens?
+    def __init__(self, model_type, output_type='mean', freeze=True, weights="DEFAULT"):
+        super().__init__()
+        repo_path = '/home/zw4269/dev/dinov3'
+
+        # DINOv3 ViT models pretrained on web images
+        dinov3_vits16 = torch.hub.load(repo_path, 'dinov3_vits16', source='local', weights='./exp-results/emb_ckpt/dino3/dinov3_vits16_pretrain_lvd1689m-08c60483.pth')
+        dinov3_vitb16 = torch.hub.load(repo_path, 'dinov3_vitb16', source='local', weights='./exp-results/emb_ckpt/dino3/dinov3_vitb16_pretrain_lvd1689m-73cec8be.pth')
+        dinov3_vitl16 = torch.hub.load(repo_path, 'dinov3_vitl16', source='local', weights='./exp-results/emb_ckpt/dino3/dinov3_vitl16_pretrain_lvd1689m-8aa4cbdd.pth')
+
+        if model_type == "dinov3_vits16":
+            self.dino_model = dinov3_vits16
+        elif model_type == "dinov3_vitb16":
+            self.dino_model = dinov3_vitb16
+        elif model_type == "dinov3_vitl16":
+            self.dino_model = dinov3_vitl16
+        else:
+            raise NotImplementedError(model_type)
+
+        if freeze:
+            for param in self.dino_model.parameters():
+                param.requires_grad = False
+            self.dino_model.eval()
+        
+        # Get feature dimension from the model
+        self.feature_dim = self.dino_model.embed_dim
+        self.adaptor = nn.Identity()
+
+        if output_type == 'mean':
+            print("use mean")
+            self.projection = self.mean_projection
+        elif output_type == 'cls':
+            self.projection = self.cls_projection
+        elif output_type == 'feature':
+            self.projection = self.seq_projection
+        elif output_type == 'max':
+            print("use max")
+            self.projection = self.max_projection
+        elif output_type.startswith('gem'): # for example: gem_3
+            print("use", output_type)
+            p = float(int(output_type.split('_')[1]))
+            self.projection = self.gem_projection
+            self.p = nn.Parameter(torch.ones(1) * p)
+            if freeze:
+                self.p.requires_grad = False
+        else:
+            raise NotImplementedError
+
+    def mean_projection(self, x):
+        if isinstance(x, dict):
+            x = x['x_norm_patchtokens']
+        return x.mean(dim=1)
+    
+    def max_projection(self, x):
+        if isinstance(x, dict):
+            x = x['x_norm_patchtokens']
+        x_bhl = x.permute(0, 2, 1)
+        xp_bh = F.adaptive_max_pool1d(x_bhl, output_size=1).squeeze(2)
+        return xp_bh
+    
+    def gem_projection(self, x, eps=1e-6):
+        if isinstance(x, dict):
+            x = x['x_norm_patchtokens']
+        x_clamped = F.relu(x).clamp(min=eps)
+        gem_pooled = (x_clamped.pow(self.p).mean(dim=1, keepdim=False)).pow(1./self.p)
+        return gem_pooled        
+    
+    def cls_projection(self, x):
+        if isinstance(x, dict):
+            x = x['x_norm_clstoken']
+        return x
+    
+    def seq_projection(self, x):
+        if isinstance(x, dict):
+            x = x['x_norm_patchtokens']
+        return x # B x L
+
+    def forward(self, pixel_values):
+        # DINOv3 forward pass
+        outputs = self.dino_model.forward_features(pixel_values)
+        last_hidden_states = outputs  # B x L x h
+        embs = self.projection(last_hidden_states)
+        embs = self.adaptor(embs)
         return embs        
 
 
@@ -258,6 +345,14 @@ def ViTLarge_Embedder(**kwargs):
 def ViTHuge_Embedder(**kwargs):
     return ViTEmbedder(model_type="vit_huge", **kwargs)
 
+def DINOv3Small_Embedder(**kwargs):
+    return DINOv3Embedder(model_type="dinov3_vits16", **kwargs)
+
+def DINOv3Base_Embedder(**kwargs):
+    return DINOv3Embedder(model_type="dinov3_vitb16", **kwargs)
+
+def DINOv3Large_Embedder(**kwargs):
+    return DINOv3Embedder(model_type="dinov3_vitl16", **kwargs)
 
 
 # def DINOv2Huge_Embedder(**kwargs):
@@ -275,5 +370,8 @@ Embedders = {
     'dinov2-large': DINOv2Large_Embedder,
     'vit-base': ViTBase_Embedder,
     'vit-large': ViTLarge_Embedder,
-    'vit-huge': ViTHuge_Embedder
+    'vit-huge': ViTHuge_Embedder,
+    'dinov3-small': DINOv3Small_Embedder,
+    'dinov3-base': DINOv3Base_Embedder,
+    'dinov3-large': DINOv3Large_Embedder,
 }

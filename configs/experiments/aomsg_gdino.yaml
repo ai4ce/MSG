@@ -14,7 +14,7 @@ loss_params:
 eval_split: Test
 train_split: Training
 
-output_dir: './exp-results/gdino'
+output_dir: './exp-results/aomsg-gdino'
 output_file: 'train'
 wandb: False
 
@@ -23,7 +23,7 @@ resume: False
 resume_path: './path/to/checkpoints/0+.pth'
 
 eval_output_dir: './exp-results/emb_ckpt' # this is specific to trained checkpoints
-eval_chkpt: aomsg_s_4.pth #29-step44940+.pth #null for no checkpoint
+eval_chkpt: aomsg-s-4.pth #29-step44940+.pth #null for no checkpoint
 save_every: True # if save specific results for every video
 eval_step: 100
 

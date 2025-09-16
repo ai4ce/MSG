@@ -1,6 +1,6 @@
 # sample style training script
 dataset_path: './data/msg'
-device: 1
+device: 0
 pp_threshold: 0.3
 object_threshold: 0.2
 
@@ -22,8 +22,8 @@ wandb: True
 resume: False
 resume_path: './path/to/checkpoints/0+.pth'
 # for eval
-eval_output_dir: './exp-results/aomsg/2024-05-14_22-26-52' # this is specific to trained checkpoints
-eval_chkpt: 29-step22470+.pth #null for no checkpoint
+eval_output_dir: './exp-results/aomsg' # this is specific to trained checkpoints
+eval_chkpt: aomsg-s-4.pth #null for no checkpoint
 save_every: True # if save specific results for every video
 eval_step: 100
 

@@ -196,6 +196,7 @@ class VideoDataset(Dataset):
         if self.use_gdino:
             pred_box, pred_label = self.get_pred_det(frame_id)
             data['pred_bbox'] = pred_box
+            data['pred_label'] = pred_label
 
         # images: 2 x H x W x 3
         # detections: 2 x N x 4, N can be not the same
@@ -339,7 +340,7 @@ def arkit_collate_fn(batch):
     
         ret['pred_bbox'] = batch_pred_bbox
         ret['pred_bbox_mask'] = batch_pred_bbox_mask
-    
+        ret['pred_label'] = pad_sequence([item['pred_label'] for item in batch], batch_first=True, padding_value=-1)
     return ret
     
 
