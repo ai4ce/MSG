@@ -1,6 +1,6 @@
 # astunparse==1.6.3
 fuzzywuzzy==0.18.0
-matplotlib==3.8.3
+matplotlib # remove the previous dependency on 3.8.3 because it conflicts with numpy
 networkx==3.2.1
 numpy==2.1.2
 open3d==0.18.0
@@ -20,3 +20,4 @@ torch==2.2.1
 torchvision==0.17.1
 tqdm==4.66.2
 transformers==4.32.1
+wandb

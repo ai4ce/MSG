@@ -1,6 +1,6 @@
 # sample style training script
-dataset_path: './data/msg'
-device: 1
+dataset_path: '/mnt/NAS/data/jz4725/msgdata/'
+device: 0
 pp_threshold: 0.3
 object_threshold: 0.2
 
@@ -20,15 +20,15 @@ wandb: True
 
 # if resume training from a chkpt
 resume: False
-resume_path: './path/to/checkpoints/0+.pth'
+resume_path: './path/to/checkpoints/0+.pth' # EXAMPLE: './exp-results/aomsg/2025-03-04_00-05-14/checkpoints/29-step22470+.pth'
 # for eval
-eval_output_dir: './exp-results/aomsg/2024-05-14_22-26-52' # this is specific to trained checkpoints
-eval_chkpt: 29-step22470+.pth #null for no checkpoint
-save_every: True # if save specific results for every video
-eval_step: 100
+eval_output_dir: './exp-results/aomsg/2025-03-04_00-05-14' # this is specific to trained checkpoints
+eval_chkpt: 28-step21721+.pth #null for no checkpoint
+save_every: False # if save specific results for every video
+eval_step: 100 # this is evaluation frequency during training
 
-learning_rate: 0.0002 # 5e-5
-num_epochs: 30
+learning_rate: 0.00002 # 5e-5
+num_epochs: 5
 warmup_epochs: 3
 warmup: no # cos
 

@@ -72,7 +72,7 @@ def train(config):
     logger = create_logger(output_dir=config["output_dir"], output_file=config["output_file"])
 
     if config["wandb"]:
-        wandb.init(project="MSG", name=f"{config['experiment']}+{config['run_id']}", config=config)
+        wandb.init(project="MSG-repr", name=f"{config['experiment']}+{config['run_id']}", config=config)
 
     logger.info(f"Experiment directory created at {config['output_dir']}")
     logger.info("Training config: %s\n", json.dumps(config, indent=4))
@@ -117,12 +117,12 @@ def train(config):
         if config["wandb"]:
             wandb.log(eval_res)
         model.train()
-
+    #TODO: need to handle improve the epoch to handle resuming better
     for e in range(config['num_epochs']):
         model.train()
         train_data.shuffle()
         for i, next_video_id in enumerate(train_data):
-            logger.info(f"Training on video {next_video_id}, progress {i+1}/{len(train_data)} Epoch {e+1}")
+            logger.info(f"Training on video {next_video_id}, progress {train_data.vid_idx+1}/{len(train_data)} Epoch {e+1}")
             
             dataset = MultiVideoDataset(video_data_dir = train_data.data_split_dir, 
                                         video_ids = next_video_id,
